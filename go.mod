@@ -1,6 +1,6 @@
 module github.com/cordilleradev/stream2
 
-go 1.24.2
+go 1.24.0
 
 require github.com/pocketbase/pocketbase v0.27.0
 
