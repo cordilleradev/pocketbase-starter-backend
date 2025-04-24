@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -17,6 +18,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	templateManager, err := common.NewTemplateManager()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	app := pocketbase.New()
 	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
 		if err := e.Next(); err != nil {
@@ -33,7 +40,58 @@ func main() {
 		e.App.Settings().SMTP.Username = config.SMTPUsername
 		e.App.Settings().SMTP.Password = config.SMTPPassword
 
+		users, err := e.App.FindCollectionByNameOrId("users")
+		if err != nil {
+			return err
+		}
+		users.OTP.Enabled = true
+		users.OTP.Length = 6
+		err = e.App.Save(users)
+		if err != nil {
+			return err
+		}
 		return e.App.Save(e.App.Settings())
+	})
+
+	app.OnMailerRecordAuthAlertSend().BindFunc(func(e *core.MailerRecordEvent) error {
+		e.Message.HTML = templateManager.LoginAlertContent(config.AppName)
+		return e.Next()
+	})
+
+	app.OnMailerRecordEmailChangeSend().BindFunc(func(e *core.MailerRecordEvent) error {
+		e.Message.HTML = templateManager.ConfirmEmailChangeContent(
+			e.Meta["token"].(string),
+			config.FrontendURL,
+			config.AppName,
+		)
+		return e.Next()
+	})
+
+	app.OnMailerRecordOTPSend().BindFunc(func(e *core.MailerRecordEvent) error {
+		fmt.Println(e.Meta)
+		e.Message.HTML = templateManager.OtpContent(
+			e.Meta["password"].(string),
+			config.AppName,
+		)
+		return e.Next()
+	})
+
+	app.OnMailerRecordPasswordResetSend().BindFunc(func(e *core.MailerRecordEvent) error {
+		e.Message.HTML = templateManager.PasswordResetContent(
+			e.Meta["token"].(string),
+			config.FrontendURL,
+			config.AppName,
+		)
+		return e.Next()
+	})
+
+	app.OnMailerRecordVerificationSend().BindFunc(func(e *core.MailerRecordEvent) error {
+		e.Message.HTML = templateManager.VerifyEmailContent(
+			e.Meta["token"].(string),
+			config.FrontendURL,
+			config.AppName,
+		)
+		return e.Next()
 	})
 
 	if err := app.Start(); err != nil {
