@@ -18,3 +18,6 @@
 go.work
 # Pocketbase specific files
 .env
+pb_data/
+pb_migrations/
+.DS_Store

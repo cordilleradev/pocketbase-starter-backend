@@ -3,6 +3,7 @@ module github.com/cordilleradev/stream2
 go 1.24.0
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/pocketbase/pocketbase v0.27.0
 	github.com/stellar/go v0.0.0-20250417130535-10df2019148f
 )
