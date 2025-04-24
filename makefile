@@ -1,13 +1,11 @@
-# Makefile for PocketBase
-
 # Configuration
 APP_NAME := pocketbase
 BUILD_DIR := ./build
 MAIN_FILE := ./main.go
 DATA_DIR_DEV := ./pb_data
-DATA_DIR_PROD := /data/pocketbase
+DATA_DIR_PROD := /var/data
 PORT := 8080
-PROD_PORT := 10000
+# Use $PORT env variable in production (set by Render)
 
 # Go build flags
 GOFLAGS := -ldflags="-s -w"
@@ -15,7 +13,7 @@ GOFLAGS := -ldflags="-s -w"
 # Ensure required directories exist
 $(shell mkdir -p $(BUILD_DIR) $(DATA_DIR_DEV))
 
-.PHONY: all build clean dev prod setup-prod backup help
+.PHONY: all build clean dev prod setup-prod backup help render-build render-start
 
 # Default target
 all: build
@@ -37,17 +35,15 @@ dev:
 	@echo "Starting $(APP_NAME) in development mode..."
 	go run $(MAIN_FILE) serve --dev --dir=$(DATA_DIR_DEV) --http=0.0.0.0:$(PORT)
 
-# Setup production environment (create data directory and set permissions)
-setup-prod:
-	@echo "Setting up production environment..."
-	sudo mkdir -p $(DATA_DIR_PROD)
-	sudo chown $(shell id -u):$(shell id -g) $(DATA_DIR_PROD)
-	@echo "Production environment setup completed!"
+# For Render build step
+render-build:
+	@echo "Building for Render deployment..."
+	go build $(GOFLAGS) -o app $(MAIN_FILE)
 
-# Run PocketBase in production mode with persistent storage
-prod: build setup-prod
-	@echo "Starting $(APP_NAME) in production mode..."
-	$(BUILD_DIR)/$(APP_NAME) serve --dir=$(DATA_DIR_PROD) --http=0.0.0.0:$(PROD_PORT)
+# For Render start command
+render-start:
+	@echo "Starting PocketBase on Render..."
+	./app serve --dir=$(DATA_DIR_PROD) --http=0.0.0.0:$$PORT
 
 # Create a backup of the production data
 backup:
@@ -61,11 +57,13 @@ help:
 	@echo "PocketBase Makefile Help"
 	@echo "-----------------------"
 	@echo "Available targets:"
-	@echo "  all        : Same as 'build'"
-	@echo "  build      : Compile the PocketBase application"
-	@echo "  clean      : Remove build artifacts"
-	@echo "  dev        : Run PocketBase in development mode (port $(PORT))"
-	@echo "  setup-prod : Set up production environment (requires sudo)"
-	@echo "  prod       : Run PocketBase in production mode (port $(PROD_PORT))"
-	@echo "  backup     : Create a backup of the production data"
-	@echo "  help       : Display this help message"
+	@echo "  all          : Same as 'build'"
+	@echo "  build        : Compile the PocketBase application"
+	@echo "  clean        : Remove build artifacts"
+	@echo "  dev          : Run PocketBase in development mode (port $(PORT))"
+	@echo "  setup-prod   : Set up production environment"
+	@echo "  prod         : Run PocketBase in production mode (port $(PORT))"
+	@echo "  render-build : Build for Render deployment"
+	@echo "  render-start : Start command for Render deployment"
+	@echo "  backup       : Create a backup of the production data"
+	@echo "  help         : Display this help message"
