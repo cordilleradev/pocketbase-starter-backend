@@ -1,13 +1,34 @@
-<p>Hello,</p>
-<p>We noticed a login to your {{.AppName}} account from a new location.</p>
-<p>If this was you, you may disregard this email.</p>
-<p>
-    <strong
-        >If this wasn't you, you should immediately change your {{.AppName}}
-        account password to revoke access from all other locations.</strong
-    >
-</p>
-<p>
-    Thanks,<br />
-    {{.AppName}} team
-</p>
+<!doctype html>
+<html>
+    <head>
+        <style>
+            {{.CSS}}
+        </style>
+    </head>
+    <body>
+        <div class="email-container">
+            <div class="header">
+                <h1 class="app-name">{{.AppName}}</h1>
+            </div>
+
+            <p>Hello,</p>
+            <p>
+                We noticed a login to your {{.AppName}} account from a new
+                location.
+            </p>
+            <p>If this was you, you may disregard this email.</p>
+
+            <div class="alert alert-info">
+                <strong
+                    >If this wasn't you, you should immediately change your
+                    {{.AppName}} account password to revoke access from all
+                    other locations.</strong
+                >
+            </div>
+
+            <div class="footer">
+                <p>Thanks,<br />{{.AppName}} team</p>
+            </div>
+        </div>
+    </body>
+</html>

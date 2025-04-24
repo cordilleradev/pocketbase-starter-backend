@@ -1,21 +1,38 @@
-<p>Hello,</p>
-<p>Click on the button below to confirm your new email address.</p>
-<p>
-    <a
-        class="btn"
-        href="{{.AppURL}}/confirm-email-change?token={{.Token}}"
-        target="_blank"
-        rel="noopener"
-        >Confirm new email</a
-    >
-</p>
-<p>
-    <i
-        >If you didn't ask to change your email address, you can ignore this
-        email.</i
-    >
-</p>
-<p>
-    Thanks,<br />
-    {{.AppName}} team
-</p>
+<!doctype html>
+<html>
+    <head>
+        <style>
+            {{.CSS}}
+        </style>
+    </head>
+    <body>
+        <div class="email-container">
+            <div class="header">
+                <h1 class="app-name">{{.AppName}}</h1>
+            </div>
+
+            <p>Hello,</p>
+            <p>Click on the button below to confirm your new email address.</p>
+            <p style="text-align: center">
+                <a
+                    class="btn"
+                    href="{{.AppURL}}/confirm-email-change?token={{.Token}}"
+                    target="_blank"
+                    rel="noopener"
+                    >Confirm new email</a
+                >
+            </p>
+
+            <div class="alert alert-info">
+                <i
+                    >If you didn't ask to change your email address, you can
+                    ignore this email.</i
+                >
+            </div>
+
+            <div class="footer">
+                <p>Thanks,<br />{{.AppName}} team</p>
+            </div>
+        </div>
+    </body>
+</html>

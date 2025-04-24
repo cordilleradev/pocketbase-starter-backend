@@ -10,6 +10,7 @@ import (
 // TemplateManager manages email templates
 type TemplateManager struct {
 	templates map[string]*template.Template
+	cssStyle  string
 }
 
 // NewTemplateManager creates and initializes a new TemplateManager
@@ -17,6 +18,14 @@ func NewTemplateManager() (*TemplateManager, error) {
 	tm := &TemplateManager{
 		templates: make(map[string]*template.Template),
 	}
+
+	// Load global CSS
+	cssPath := filepath.Join("templates", "global.css")
+	cssContent, err := os.ReadFile(cssPath)
+	if err != nil {
+		return nil, err
+	}
+	tm.cssStyle = string(cssContent)
 
 	// Parse all templates from the templates directory
 	templateFiles := []string{
@@ -50,10 +59,12 @@ func (tm *TemplateManager) ConfirmEmailChangeContent(token string, appURL string
 		Token   string
 		AppURL  string
 		AppName string
+		CSS     string
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
+		CSS:     tm.cssStyle,
 	}
 
 	var buf bytes.Buffer
@@ -69,9 +80,11 @@ func (tm *TemplateManager) OtpContent(otp string, appName string) string {
 	data := struct {
 		OTP     string
 		AppName string
+		CSS     string
 	}{
 		OTP:     otp,
 		AppName: appName,
+		CSS:     tm.cssStyle,
 	}
 
 	var buf bytes.Buffer
@@ -88,10 +101,12 @@ func (tm *TemplateManager) PasswordResetContent(token string, appURL string, app
 		Token   string
 		AppURL  string
 		AppName string
+		CSS     string
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
+		CSS:     tm.cssStyle,
 	}
 
 	var buf bytes.Buffer
@@ -108,10 +123,12 @@ func (tm *TemplateManager) VerifyEmailContent(token string, appURL string, appNa
 		Token   string
 		AppURL  string
 		AppName string
+		CSS     string
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
+		CSS:     tm.cssStyle,
 	}
 
 	var buf bytes.Buffer
@@ -126,8 +143,10 @@ func (tm *TemplateManager) VerifyEmailContent(token string, appURL string, appNa
 func (tm *TemplateManager) LoginAlertContent(appName string) string {
 	data := struct {
 		AppName string
+		CSS     string
 	}{
 		AppName: appName,
+		CSS:     tm.cssStyle,
 	}
 
 	var buf bytes.Buffer
