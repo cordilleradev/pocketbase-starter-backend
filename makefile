@@ -4,7 +4,7 @@ BUILD_DIR := ./build
 MAIN_FILE := ./main.go
 DATA_DIR_DEV := ./pb_data
 DATA_DIR_PROD := /var/data
-PORT := 8080
+PORT := 10000
 # Use $PORT env variable in production (set by Render)
 
 # Go build flags
