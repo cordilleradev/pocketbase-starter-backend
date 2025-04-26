@@ -43,7 +43,18 @@ func NewTemplateManager() (*TemplateManager, error) {
 			return nil, err
 		}
 
-		tmpl, err := template.New(file).Parse(string(tmplContent))
+		// Convert template content to string and ensure CSS is properly embedded
+		strContent := string(tmplContent)
+
+		// Create a new template with embedded CSS functionality
+		tmpl := template.New(file).Funcs(template.FuncMap{
+			"safeCSS": func(s string) template.CSS {
+				return template.CSS(s)
+			},
+		})
+
+		// Parse the template with the CSS function available
+		tmpl, err = tmpl.Parse(strContent)
 		if err != nil {
 			return nil, err
 		}
@@ -59,12 +70,12 @@ func (tm *TemplateManager) ConfirmEmailChangeContent(token string, appURL string
 		Token   string
 		AppURL  string
 		AppName string
-		CSS     string
+		CSS     template.CSS
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
-		CSS:     tm.cssStyle,
+		CSS:     template.CSS(tm.cssStyle),
 	}
 
 	var buf bytes.Buffer
@@ -80,11 +91,11 @@ func (tm *TemplateManager) OtpContent(otp string, appName string) string {
 	data := struct {
 		OTP     string
 		AppName string
-		CSS     string
+		CSS     template.CSS
 	}{
 		OTP:     otp,
 		AppName: appName,
-		CSS:     tm.cssStyle,
+		CSS:     template.CSS(tm.cssStyle),
 	}
 
 	var buf bytes.Buffer
@@ -101,12 +112,12 @@ func (tm *TemplateManager) PasswordResetContent(token string, appURL string, app
 		Token   string
 		AppURL  string
 		AppName string
-		CSS     string
+		CSS     template.CSS
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
-		CSS:     tm.cssStyle,
+		CSS:     template.CSS(tm.cssStyle),
 	}
 
 	var buf bytes.Buffer
@@ -123,12 +134,12 @@ func (tm *TemplateManager) VerifyEmailContent(token string, appURL string, appNa
 		Token   string
 		AppURL  string
 		AppName string
-		CSS     string
+		CSS     template.CSS
 	}{
 		Token:   token,
 		AppURL:  appURL,
 		AppName: appName,
-		CSS:     tm.cssStyle,
+		CSS:     template.CSS(tm.cssStyle),
 	}
 
 	var buf bytes.Buffer
@@ -143,10 +154,10 @@ func (tm *TemplateManager) VerifyEmailContent(token string, appURL string, appNa
 func (tm *TemplateManager) LoginAlertContent(appName string) string {
 	data := struct {
 		AppName string
-		CSS     string
+		CSS     template.CSS
 	}{
 		AppName: appName,
-		CSS:     tm.cssStyle,
+		CSS:     template.CSS(tm.cssStyle),
 	}
 
 	var buf bytes.Buffer

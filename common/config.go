@@ -14,10 +14,6 @@ type Config struct {
 	AppName     string
 	FrontendURL string
 
-	// Stellar Connection
-	StellarHorizonServer     string
-	StellarNetworkPassphrase string
-
 	// SMTP Settings
 	SMTPEnabled    bool
 	SMTPHost       string
@@ -68,16 +64,6 @@ func NewConfig(devMode bool) (Config, error) {
 		return Config{}, err
 	}
 
-	stellarHorizonServer, err := getEnvRequired("STELLAR_HORIZON_SERVER")
-	if err != nil {
-		return Config{}, err
-	}
-
-	stellarNetworkPassphrase, err := getEnvRequired("STELLAR_NETWORK_PASSPHRASE")
-	if err != nil {
-		return Config{}, err
-	}
-
 	smtpHost, err := getEnvRequired("SMTP_HOST")
 	if err != nil {
 		return Config{}, err
@@ -106,9 +92,6 @@ func NewConfig(devMode bool) (Config, error) {
 	return Config{
 		AppName:     appName,
 		FrontendURL: frontendURL,
-
-		StellarHorizonServer:     stellarHorizonServer,
-		StellarNetworkPassphrase: stellarNetworkPassphrase,
 
 		SMTPEnabled:    smtpEnabled,
 		SMTPHost:       smtpHost,

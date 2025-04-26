@@ -1,3 +1,4 @@
+# Go specific ignores
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -11,14 +12,50 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Dependency directories (remove the comment below if you want to ignore vendor too)
+vendor/
 
 # Go workspace file
 go.work
-# Pocketbase specific files
-.env
+
+# PocketBase specific ignores
 pb_data/
+*.db
+*.db-shm
+*.db-wal
 pb_migrations/
+pocketbase
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS specific files
 .DS_Store
-app
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+out/
